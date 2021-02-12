@@ -15,6 +15,15 @@ public class Main {
     public static void main(String[] args) {
         FenetreRobo Mafenetre = new FenetreRobo();
         Mafenetre.setVisible(true);
-    }
+        Monde monde = new Monde(5,5);
+        monde.affiche();
+        try{
+            monde.polluteBox(6,2);
+        } catch (RobotException e) {
+            System.out.println(e);
+        }
 
+
+    }
+//box[i][j] = new JLabel("["+Integer.toString(i)+"]["+Integer.toString(j)+"]");
 }
