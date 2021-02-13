@@ -26,7 +26,19 @@ public class RobotNettoyeur extends Robot {
     }
 
     @Override
-    public void parcourir() throws ErrorParcourir {
-
+    public void parcourir(int posx, int posy) throws ErrorParcourir {
+        if (posx > m.numberOfLine-1 || posy > m.numberOfColumn-1){
+            throw new ErrorParcourir();
+        }
+        else{
+            for (int i = 0; i< m.numberOfLine; i++){
+                for(int j =0; j< m.numberOfColumn; j++){
+                    if(m.Mat[posx][posy]){
+                        m.Mat[posx][posy] = false;
+                    }
+                }
+            }
+        }
     }
+
 }

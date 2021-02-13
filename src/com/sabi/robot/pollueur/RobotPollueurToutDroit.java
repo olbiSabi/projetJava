@@ -28,7 +28,7 @@ public class RobotPollueurToutDroit extends Robot {
     }
 
     @Override
-    public void parcourir() throws ErrorParcourir {
+    public void parcourir(int posx, int posy) throws ErrorParcourir {
 
     }
 

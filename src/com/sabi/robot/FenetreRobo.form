@@ -472,7 +472,9 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <text value="8"/>
+                    </properties>
                   </component>
                   <component id="bba33" class="javax.swing.JTextField" binding="nombreDeLigne">
                     <constraints>
@@ -480,7 +482,9 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <text value="8"/>
+                    </properties>
                   </component>
                   <hspacer id="6b39b">
                     <constraints>
@@ -509,7 +513,9 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <text value="1"/>
+                    </properties>
                   </component>
                   <component id="cd30b" class="javax.swing.JTextField" binding="positionY">
                     <constraints>
@@ -517,7 +523,9 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <text value="3"/>
+                    </properties>
                   </component>
                   <hspacer id="5cb7">
                     <constraints>

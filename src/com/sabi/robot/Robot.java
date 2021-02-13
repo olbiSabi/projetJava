@@ -17,5 +17,5 @@ public abstract class Robot {
         posy = (int) (Math.random() * multiple);
     }
     public abstract void deplace(int i, int j) throws RobotException;
-    public abstract void parcourir() throws ErrorParcourir;
+    public abstract void parcourir(int posx,int posy) throws ErrorParcourir;
 }

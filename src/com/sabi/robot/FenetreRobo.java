@@ -1,11 +1,19 @@
 package com.sabi.robot;
 
 import com.sabi.exception.RobotException;
+import com.sabi.robot.nettoyeur.RobotNettoyeurLibre;
+import com.sabi.robot.nettoyeur.RobotNettoyeurSmart;
+import com.sabi.robot.nettoyeur.RobotNettoyeurStandard;
+import com.sabi.robot.pollueur.RobotPollueurLibre;
+import com.sabi.robot.pollueur.RobotPollueurSauteurs;
+import com.sabi.robot.pollueur.RobotPollueurToutDroit;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class FenetreRobo extends JFrame {
     private JPanel Principal;
@@ -48,256 +56,93 @@ public class FenetreRobo extends JFrame {
     private JLabel[] boxx;
     public int NBC;
     public int NBL;
+    public int PX;
+    public int PY;
+    private int multiple;
+    private int nbrBoxApolluer;
     public Monde monde;
+    public RobotPollueurToutDroit robotPTD;
+    public RobotPollueurToutDroit robotDirection;
+    public RobotPollueurSauteurs robotPS;
+    public RobotPollueurSauteurs robotPSA;
+    public RobotPollueurLibre robotPL;
+    public RobotNettoyeurLibre robotNL;
+    public RobotNettoyeurSmart robotNSmart;
+    public RobotNettoyeurStandard robotNStandard;
 
     public FenetreRobo(){
         add(Principal);
         setTitle("Robot");
         setSize(900,600);
-        NBC = 8;
-        NBL = 8;;
-        box = new JLabel[NBL][NBC];
         createUIComponents();
         apparenceDesComposant();
-        initMonde(NBL,NBC);
-        //initMonde();
-        //initParamettrerMonde(5,5);
-/*################################################################################################################
- *********************************CONFIGURATION DES ECOUTEUR ADDACTIONLISTNER ************************************
-##################################################################################################################*/
 
-        /*##########################################################################
-                             **********  BOUTTON VALIDE ****************
-         ###########################################################################*/
+        /*******************  BOUTTON VALIDER *****************/
         btnValider.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                caseSalle(4,9);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
+
+                NBL = Integer.parseInt(nombreDeLigne.getText());
+                NBC = Integer.parseInt(nombreDeCollonne.getText());
+                PX = Integer.parseInt(positionX.getText()) -1;
+                PY = Integer.parseInt(positionY.getText()) -1;
+                box = new JLabel[NBL][NBC];
+                multiple = NBL ;
+                nbrBoxApolluer = (NBL*NBC)/3;
+                initMonde(NBL,NBC);
+                nombreDeLigne.setText("");
+                nombreDeCollonne.setText("");
+                btnValider.setEnabled(false);
             }
         });
-        /*##########################################################################
-                             **********  BOUTTON POLLUEUR SAUTEUR *******************
-        ###########################################################################*/
-        btnPollueurSauteur.addActionListener(new ActionListener() {
+        /******************* BOUTTON RENITIALISER *****************/
+        btnRenitialiser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                caseSalle(4,7);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
+                FenetreRobo fenetre = new FenetreRobo();
+                fenetre.setVisible(true);
+                btnValider.setEnabled(true);
             }
         });
-        /*##########################################################################
-                             **********  BOUTTON POLLUEUR TOUT DROIT ****************
-         ###########################################################################*/
-        btnPollueurToutDroit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(7,3);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             **********  BOUTTON POLLUEUR LIBRE *******************
-        ###########################################################################*/
-        btnPollueurLibre.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(6,5);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             **********  BOUTTON NETTOYEUR SMART ****************
-         ###########################################################################*/
-        btnNettoyeurSmart.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(5,2);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             **********  BOUTTON NETTOYEUR STANDARD ***************
-        ###########################################################################*/
-        btnNettoyeurStandard.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(0,0);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             ********** BOUTTON NETTOYEUR LIBRE *************
-         ###########################################################################*/
-        btnNettoyeurLibre.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(0,4);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             **********  BOUTTON POLLUEUR HAUT *******************
-        ###########################################################################*/
-        btnPollueurHaut.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(6,6);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             **********  BOUTTON POLLUEUR BAS ****************
-         ###########################################################################*/
-        btnpollueurBas.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(1,6);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             **********  BOUTTON POLLUEUR GAUCHE *******************
-        ###########################################################################*/
-        btnPollueurGauche.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(4,4);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             **********  BOUTTON POLLUEUR DROIT ***************
-        ###########################################################################*/
-        btnPollueurDroit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(2,2);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             ********** BOUTTON NETTOYEUR HAUT *************
-         ###########################################################################*/
-        btnNettoyeurHaut.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(0,5);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             **********  BOUTTON NETTOYEUR BAS *******************
-        ###########################################################################*/
-        btnNettoyeurBas.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(3,3);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             **********  BOUTTON NETTOYEUR GAUCHE ****************
-         ###########################################################################*/
-        btnNettoyeurGauche.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(1,7);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
-        /*##########################################################################
-                             **********  BOUTTON NETTOYEUR DROIT *******************
-        ###########################################################################*/
-        btnNettoyeurDroit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                caseSalle(7,2);
-                for (int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++){
-                        tableau.add(box[i][j]);
-                    }
-                }
-            }
-        });
+        /*******************  BOUTTON QUITTER *****************/
+        btnQuitter.addActionListener(e -> System.exit(0));
+        /**********  BOUTTON POLLUEUR TOUT DROIT *************/
+        btnPollueurToutDroit.addActionListener(e -> toutDroit(PX,PY));
+        /***********  BOUTTON POLLUEUR SAUTEUR **************/
+        btnPollueurSauteur.addActionListener(e -> sauteur(PX,PY));
+        /***********  BOUTTON POLLUEUR LIBRE ******************/
+        btnPollueurLibre.addActionListener(e -> pollueurLibre());
+        /***********  BOUTTON NETTOYEUR SMART *****************/
+        btnNettoyeurSmart.addActionListener(e -> nettoyeurSmart());
+        /***********  BOUTTON NETTOYEUR STANDARD **************/
+        btnNettoyeurStandard.addActionListener(e -> nettoyeurSmart());
+        /*************** BOUTTON NETTOYEUR LIBRE **************/
+        btnNettoyeurLibre.addActionListener(e -> nettoyeurLibre());
+        /***********  BOUTTON POLLUEUR HAUT *******************/
+        btnPollueurHaut.addActionListener(e -> pollueurHaut(PX,PY));
+        /**************  BOUTTON POLLUEUR BAS *****************/
+        btnpollueurBas.addActionListener(e ->pollueurBas(PX,PY));
+        /***********  BOUTTON POLLUEUR GAUCHE *****************/
+        btnPollueurGauche.addActionListener(e -> pollueurGauche(PX,PY));
+        /*************  BOUTTON POLLUEUR DROIT ****************/
+        btnPollueurDroit.addActionListener(e -> pollueurDroit(PX,PY));
+        /**************** BOUTTON NETTOYEUR HAUT **************/
+        //btnNettoyeurHaut.addActionListener(e ->);
+        /***********  BOUTTON NETTOYEUR BAS *******************/
+        //btnNettoyeurBas.addActionListener(e ->);
+        /***********  BOUTTON NETTOYEUR GAUCHE *****************/
+        //btnNettoyeurGauche.addActionListener(e ->);
+        /***********  BOUTTON NETTOYEUR DROIT ******************/
+        //btnNettoyeurDroit.addActionListener(e ->);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-
     }
+
+
     private void createUIComponents() {
         containerWest = new JPanel();
         containerEast = new JPanel();
         containerNorth = new JPanel();
-       /* btnPollueurToutDroit = new JButton();
-        btnPollueurSauteur = new JButton();
-        btnPollueurLibre = new JButton();
-        btnNettoyeurSmart = new JButton();
-        btnNettoyeurLibre = new JButton();
-        btnNettoyeurStandard = new JButton();
-        /*btnPollueurGauche = new JButton();
-        btnPollueurDroit = new JButton();
-        btnPollueurHaut = new JButton();
-        btnpollueurBas = new JButton();
-        btnNettoyeurGauche = new JButton();
-        btnNettoyeurDroit = new JButton();
-        btnNettoyeurHaut = new JButton();
-        btnNettoyeurBas = new JButton();*/
 
     }
     public void apparenceDesComposant(){
@@ -336,7 +181,7 @@ public class FenetreRobo extends JFrame {
             if (!monde.Mat[i][j]){
                 box[i][j].setBackground(Color.cyan);
                 box[i][j].setOpaque(true);
-                box[i][j].setBorder(BorderFactory.createMatteBorder(2,2,2,2,Color.BLACK));
+                box[i][j].setBorder(BorderFactory.createMatteBorder(2,2,2,2,Color.WHITE));
             }
         }catch(RobotException e){
             messageError.setText("Erreur. (i ou j) > (NBL ou NBC)");
@@ -352,7 +197,7 @@ public class FenetreRobo extends JFrame {
             if (monde.Mat[i][j]){
                 box[i][j].setBackground(Color.BLACK);
                 box[i][j].setOpaque(true);
-                box[i][j].setBorder(BorderFactory.createMatteBorder(2,2,2,2,Color.BLACK));
+                box[i][j].setBorder(BorderFactory.createMatteBorder(2,2,2,2,Color.WHITE));
             }
 
         }catch(RobotException e){
@@ -366,7 +211,7 @@ public class FenetreRobo extends JFrame {
         monde = new Monde(ligne,colonne);
         for (int i = 0; i < ligne; i++){
             for(int j = 0; j < colonne; j++){
-                if (false == monde.Mat[i][j]){
+                if (!monde.Mat[i][j]){
                     box[i][j] = new JLabel("");
                     casePropre(i,j);
                 }
@@ -379,7 +224,169 @@ public class FenetreRobo extends JFrame {
             }
         }
     }
-    // nombres papier gras
+    /*##################################################################################################################
+                                        **********  POLLUEUR TOUT DROIT *******************
+    ###################################################################################################################*/
+    public void toutDroit(int positionI, int positionJ){
+        robotPTD = new RobotPollueurToutDroit(positionI,positionJ,monde);
+        robotPTD.moveStandard();
+        for(int i = 0; i < monde.numberOfLine; i++){
+                if (monde.Mat[i][positionJ]){
+                    caseSalle(i,positionJ);
+            }
+        }
+    }
+    /*##################################################################################################################
+                                        **********  POLLUEUR SAUTEUR *******************
+    ###################################################################################################################*/
+    public void sauteur(int positionI, int positionJ){
+        robotPS = new RobotPollueurSauteurs(positionI,positionJ,monde);
+        robotPS.moveStandardStep();
+        for(int i = 0; i < monde.numberOfLine; i++){
+                if (monde.Mat[i][positionJ]){
+                    caseSalle(i,positionJ);
+            }
+        }
+    }
+    public void sauteurAlleatoir(int positionI, int positionJ){
+        robotPS = new RobotPollueurSauteurs(positionI,positionJ,monde);
+        robotPS.moveRandomStep();
+        //robotPSA = new RobotPollueurSauteurs(8,monde);
+        //robotPSA.moveRandomStep();
+        for(int i = 0; i < monde.numberOfLine; i++){
+            for (int j = 0; j < monde.numberOfColumn; j++){
+                if (monde.Mat[i][j]){
+                    caseSalle(i,j);
+                }
+            }
+        }
+    }
+    /*##################################################################################################################
+                                    **********  POLLUEUR LIBRE *******************
+    ###################################################################################################################*/
+    public void pollueurLibre(){
+        robotPL = new RobotPollueurLibre(multiple,monde);
+        robotPL.randomMove(nbrBoxApolluer);
+        for(int i = 0; i < monde.numberOfLine; i++){
+            for (int j = 0; j < monde.numberOfColumn; j++){
+                if (monde.Mat[i][j]){
+                    caseSalle(i,j);
+                }
+            }
+        }
+    }
 
+    /*##################################################################################################################
+                                        **********  NETTOYEUR SMART *******************
+    ###################################################################################################################*/
+    public void nettoyeurSmart(){
+        robotNSmart = new RobotNettoyeurSmart(multiple,monde);
+        robotNSmart.cleanSmart();
+        for(int i = 0; i < monde.numberOfLine; i++){
+            for (int j = 0; j < monde.numberOfColumn; j++){
+                if (!monde.Mat[i][j]){
+                    casePropre(i,j);
+                }
+            }
+        }
+    }
+
+    /*##################################################################################################################
+                                        **********  NETTOYEUR STANDARD *******************
+    ###################################################################################################################*/
+
+    public void nettoyeurStandard(int positionI, int positionJ){
+        robotNStandard = new RobotNettoyeurStandard(positionI,positionJ,monde);
+        //robotNStandard.moveRandomStep();
+        for(int i = 0; i < monde.numberOfLine; i++){
+            for (int j = 0; j < monde.numberOfColumn; j++){
+                if (!monde.Mat[i][j]){
+                    casePropre(i,j);
+                }
+            }
+        }
+    }
+    /*##################################################################################################################
+                                        **********  NETTOYEUR LIBRE *******************
+    ###################################################################################################################*/
+    public void nettoyeurLibre(){
+        robotNL = new RobotNettoyeurLibre(multiple,monde);
+        robotNL.freeClean();
+        for(int i = 0; i < monde.numberOfLine; i++){
+            for (int j = 0; j < monde.numberOfColumn; j++){
+                if (!monde.Mat[i][j]){
+                    casePropre(i,j);
+                }
+            }
+        }
+    }
+
+    /*##########################################################################
+                     **********  BOTTONPOLLUEUR HAUT *******************
+    ###########################################################################*/
+        public void pollueurHaut(int positionI, int positionJ){
+            robotDirection = new RobotPollueurToutDroit(positionI,positionJ,monde);
+            robotDirection.moveNorth();
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (monde.Mat[i][j]){
+                        caseSalle(i,j);
+                    }
+                }
+            }
+
+        }
+        /*##########################################################################
+                             **********  BOUTTON POLLUEUR BAS ****************
+         ###########################################################################*/
+        public void pollueurBas(int positionI, int positionJ){
+            robotDirection = new RobotPollueurToutDroit(positionI,positionJ,monde);
+            robotDirection.moveSouth();
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (monde.Mat[i][j]){
+                        caseSalle(i,j);
+                    }
+                }
+            }
+        }
+        /*##########################################################################
+                             **********  BOUTTON POLLUEUR GAUCHE *******************
+        ###########################################################################*/
+        public void pollueurGauche(int positionI, int positionJ){
+            robotDirection = new RobotPollueurToutDroit(positionI,positionJ,monde);
+            robotDirection.moveLeft();
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (monde.Mat[i][j]){
+                        caseSalle(i,j);
+                    }
+                }
+            }
+        }
+        /*##########################################################################
+                             **********  BOUTTON POLLUEUR DROIT ***************
+        ###########################################################################*/
+        public void pollueurDroit(int positionI, int positionJ){
+            robotDirection = new RobotPollueurToutDroit(positionI,positionJ,monde);
+            robotDirection.moveRight();
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (monde.Mat[i][j]){
+                        caseSalle(i,j);
+                    }
+                }
+            }
+        }
+
+        /*##########################################################################
+                             **********  BOUTTON POLLUEUR DROIT ***************
+        ###########################################################################
+        btnPollueurDroit.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            pollueurDroit(PX,PY);
+        }
+    });*/
 
 }

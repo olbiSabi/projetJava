@@ -14,7 +14,7 @@ public class RobotNettoyeurSmart extends RobotNettoyeur {
     public void cleanSmart(){
         for (int i = 0; i < m.numberOfLine; i++){
             for (int j = 0; j < m.numberOfColumn; j++){
-                if (m.Mat[i][j] == true)
+                if (m.Mat[i][j])
                     m.Mat[i][j] = false;
             }
         }
