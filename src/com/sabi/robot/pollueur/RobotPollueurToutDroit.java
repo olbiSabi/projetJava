@@ -39,32 +39,4 @@ public class RobotPollueurToutDroit extends Robot {
         //monde.affiche();
     }
 
-    //move South
-    public void moveSouth(){
-        m.Mat[posx][posy] = true;
-        if(posx+1 < m.numberOfLine){
-            m.Mat[1+posx++][posy] = true;
-        }
-    }
-    //move North
-    public void moveNorth(){
-        m.Mat[posx][posy] = true;
-        if(posx-1 > -1){
-            m.Mat[(posx--)-1][posy] = true;
-        }
-    }
-    //move right
-    public void moveRight(){
-        m.Mat[posx][posy] = true;
-        if(posy+1 < m.numberOfColumn){
-            m.Mat[posx][1+posy++] = true;
-        }
-    }
-    //move left
-    public void moveLeft(){
-        m.Mat[posx][posy] = true;
-        if(posy-1 > -1){
-            m.Mat[posx][(posy--)-1] = true;
-        }
-    }
 }

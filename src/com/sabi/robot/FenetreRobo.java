@@ -15,7 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class FenetreRobo extends JFrame {
+public class FenetreRobo extends JFrame implements ActionListener {
     private JPanel Principal;
     private JPanel container;
     private JPanel containerCenter;
@@ -53,7 +53,6 @@ public class FenetreRobo extends JFrame {
     private JLabel messageError;
     private JLabel nombePapierGras;
     public JLabel box[][];
-    private JLabel[] boxx;
     public int NBC;
     public int NBL;
     public int PX;
@@ -72,69 +71,47 @@ public class FenetreRobo extends JFrame {
 
     public FenetreRobo(){
         add(Principal);
-        setTitle("Robot");
+        setTitle("Robot Monde De ONIANKITAN Sabi");
         setSize(900,600);
         createUIComponents();
         apparenceDesComposant();
 
         /*******************  BOUTTON VALIDER *****************/
-        btnValider.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                NBL = Integer.parseInt(nombreDeLigne.getText());
-                NBC = Integer.parseInt(nombreDeCollonne.getText());
-                PX = Integer.parseInt(positionX.getText()) -1;
-                PY = Integer.parseInt(positionY.getText()) -1;
-                box = new JLabel[NBL][NBC];
-                multiple = NBL ;
-                nbrBoxApolluer = (NBL*NBC)/3;
-                initMonde(NBL,NBC);
-                nombreDeLigne.setText("");
-                nombreDeCollonne.setText("");
-                btnValider.setEnabled(false);
-            }
-        });
+        btnValider.addActionListener(this);
         /******************* BOUTTON RENITIALISER *****************/
-        btnRenitialiser.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FenetreRobo fenetre = new FenetreRobo();
-                fenetre.setVisible(true);
-                btnValider.setEnabled(true);
-            }
-        });
+        btnRenitialiser.addActionListener(this);
         /*******************  BOUTTON QUITTER *****************/
         btnQuitter.addActionListener(e -> System.exit(0));
         /**********  BOUTTON POLLUEUR TOUT DROIT *************/
-        btnPollueurToutDroit.addActionListener(e -> toutDroit(PX,PY));
+        btnPollueurToutDroit.addActionListener(this);
         /***********  BOUTTON POLLUEUR SAUTEUR **************/
-        btnPollueurSauteur.addActionListener(e -> sauteur(PX,PY));
+        btnPollueurSauteur.addActionListener(this);
         /***********  BOUTTON POLLUEUR LIBRE ******************/
-        btnPollueurLibre.addActionListener(e -> pollueurLibre());
+        btnPollueurLibre.addActionListener(this);
         /***********  BOUTTON NETTOYEUR SMART *****************/
-        btnNettoyeurSmart.addActionListener(e -> nettoyeurSmart());
+        btnNettoyeurSmart.addActionListener(this);
         /***********  BOUTTON NETTOYEUR STANDARD **************/
-        btnNettoyeurStandard.addActionListener(e -> nettoyeurSmart());
+        btnNettoyeurStandard.addActionListener(this);
         /*************** BOUTTON NETTOYEUR LIBRE **************/
-        btnNettoyeurLibre.addActionListener(e -> nettoyeurLibre());
+        btnNettoyeurLibre.addActionListener(this);
         /***********  BOUTTON POLLUEUR HAUT *******************/
-        btnPollueurHaut.addActionListener(e -> pollueurHaut(PX,PY));
+        btnPollueurHaut.addActionListener(this);
         /**************  BOUTTON POLLUEUR BAS *****************/
-        btnpollueurBas.addActionListener(e ->pollueurBas(PX,PY));
+        btnpollueurBas.addActionListener(this);
         /***********  BOUTTON POLLUEUR GAUCHE *****************/
-        btnPollueurGauche.addActionListener(e -> pollueurGauche(PX,PY));
+        btnPollueurGauche.addActionListener(this);
         /*************  BOUTTON POLLUEUR DROIT ****************/
-        btnPollueurDroit.addActionListener(e -> pollueurDroit(PX,PY));
+        btnPollueurDroit.addActionListener(this);
         /**************** BOUTTON NETTOYEUR HAUT **************/
-        //btnNettoyeurHaut.addActionListener(e ->);
+        btnNettoyeurHaut.addActionListener(this);
         /***********  BOUTTON NETTOYEUR BAS *******************/
-        //btnNettoyeurBas.addActionListener(e ->);
+        btnNettoyeurBas.addActionListener(this);
         /***********  BOUTTON NETTOYEUR GAUCHE *****************/
-        //btnNettoyeurGauche.addActionListener(e ->);
+        btnNettoyeurGauche.addActionListener(this);
         /***********  BOUTTON NETTOYEUR DROIT ******************/
-        //btnNettoyeurDroit.addActionListener(e ->);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        btnNettoyeurDroit.addActionListener(this);
+        setDefaultCloseOperation(FenetreRobo.EXIT_ON_CLOSE);
+        setVisible(true);
 
     }
 
@@ -224,32 +201,9 @@ public class FenetreRobo extends JFrame {
             }
         }
     }
-    /*##################################################################################################################
-                                        **********  POLLUEUR TOUT DROIT *******************
-    ###################################################################################################################*/
-    public void toutDroit(int positionI, int positionJ){
-        robotPTD = new RobotPollueurToutDroit(positionI,positionJ,monde);
-        robotPTD.moveStandard();
-        for(int i = 0; i < monde.numberOfLine; i++){
-                if (monde.Mat[i][positionJ]){
-                    caseSalle(i,positionJ);
-            }
-        }
-    }
-    /*##################################################################################################################
-                                        **********  POLLUEUR SAUTEUR *******************
-    ###################################################################################################################*/
-    public void sauteur(int positionI, int positionJ){
-        robotPS = new RobotPollueurSauteurs(positionI,positionJ,monde);
-        robotPS.moveStandardStep();
-        for(int i = 0; i < monde.numberOfLine; i++){
-                if (monde.Mat[i][positionJ]){
-                    caseSalle(i,positionJ);
-            }
-        }
-    }
-    public void sauteurAlleatoir(int positionI, int positionJ){
-        robotPS = new RobotPollueurSauteurs(positionI,positionJ,monde);
+    /***********  POLLUEUR SAUTEUR ***********/
+    public void sauteurAlleatoir(){
+        robotPS = new RobotPollueurSauteurs(PX,PY,monde);
         robotPS.moveRandomStep();
         //robotPSA = new RobotPollueurSauteurs(8,monde);
         //robotPSA.moveRandomStep();
@@ -261,72 +215,138 @@ public class FenetreRobo extends JFrame {
             }
         }
     }
-    /*##################################################################################################################
-                                    **********  POLLUEUR LIBRE *******************
-    ###################################################################################################################*/
-    public void pollueurLibre(){
-        robotPL = new RobotPollueurLibre(multiple,monde);
-        robotPL.randomMove(nbrBoxApolluer);
-        for(int i = 0; i < monde.numberOfLine; i++){
-            for (int j = 0; j < monde.numberOfColumn; j++){
-                if (monde.Mat[i][j]){
-                    caseSalle(i,j);
+//########################################## POLLUEUR ############################################
+    //move South
+    public void moveSouth(){
+        if (PX < NBL){
+            PX = PX+1;
+            monde.Mat[PX][PY] = true;
+        }
+        else{
+            messageError.setText(" vous êtes à la limite du monde");
+            messageError.setForeground(Color.red);
+        }
+    }
+    //move North
+    public void moveNorth(){
+        if (PX >= 0){
+            PX = PX-1;
+            monde.Mat[PX][PY] = true;
+        }
+        else{
+            messageError.setText(" vous êtes à la limite du monde");
+            messageError.setForeground(Color.red);
+        }
+    }
+    //move right
+    public void moveRight(){
+        if (PY < NBC){
+            PY = PY+1;
+            monde.Mat[PX][PY] = true;
+
+        }
+        else{
+            messageError.setText(" vous êtes à la limite du monde");
+            messageError.setForeground(Color.red);
+        }
+    }
+    //move left
+    public void moveLeft(){
+        if (PY >= 0){
+            PY = PY-1;
+            monde.Mat[PX][PY] = true;
+
+        }
+        else{
+            messageError.setText(" vous êtes à la limite du monde");
+            messageError.setForeground(Color.red);
+        }
+    }
+    //########################################## NETTOYEUR ############################################
+    //move South
+    public void moveSud(){
+        if (PX < NBL){
+            PX = PX+1;
+            monde.Mat[PX][PY] = false;
+        }
+        else{
+            messageError.setText(" vous êtes à la limite du monde");
+            messageError.setForeground(Color.red);
+        }
+    }
+    //move North
+    public void moveNord(){
+        if (PX >= 0){
+            PX = PX-1;
+            monde.Mat[PX][PY] = false;
+        }
+        else{
+            messageError.setText(" vous êtes à la limite du monde");
+            messageError.setForeground(Color.red);
+        }
+    }
+    //move right
+    public void moveDroit(){
+        if (PY < NBC){
+            PY = PY+1;
+            monde.Mat[PX][PY] = false;
+        }
+        else{
+            messageError.setText(" vous êtes à la limite du monde");
+            messageError.setForeground(Color.red);
+        }
+    }
+    //move left
+    public void moveGauche(){
+        if (PY >= 0){
+            PY = PY-1;
+            monde.Mat[PX][PY] = false;
+        }
+        else{
+            messageError.setText(" vous êtes à la limite du monde");
+            messageError.setForeground(Color.red);
+        }
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == btnRenitialiser) {
+            this.dispose();
+            new FenetreRobo();
+        }
+        if (e.getSource() == btnValider) {
+            NBL = Integer.parseInt(nombreDeLigne.getText());
+            NBC = Integer.parseInt(nombreDeCollonne.getText());
+            PX = Integer.parseInt(positionX.getText()) -1;
+            PY = Integer.parseInt(positionY.getText()) -1;
+            box = new JLabel[NBL][NBC];
+            multiple = NBL ;
+            nbrBoxApolluer = (NBL*NBC)/3;
+            initMonde(NBL,NBC);
+            nombreDeLigne.setText("");
+            nombreDeCollonne.setText("");
+            btnValider.setEnabled(false);
+        }
+        if (e.getSource() == btnPollueurToutDroit){
+            robotPTD = new RobotPollueurToutDroit(PX,PY,monde);
+            robotPTD.moveStandard();
+            for(int i = 0; i < monde.numberOfLine; i++){
+                if (monde.Mat[i][PY]){
+                    caseSalle(i,PY);
                 }
             }
         }
-    }
-
-    /*##################################################################################################################
-                                        **********  NETTOYEUR SMART *******************
-    ###################################################################################################################*/
-    public void nettoyeurSmart(){
-        robotNSmart = new RobotNettoyeurSmart(multiple,monde);
-        robotNSmart.cleanSmart();
-        for(int i = 0; i < monde.numberOfLine; i++){
-            for (int j = 0; j < monde.numberOfColumn; j++){
-                if (!monde.Mat[i][j]){
-                    casePropre(i,j);
+        if (e.getSource() == btnPollueurSauteur){
+            robotPS = new RobotPollueurSauteurs(PX,PY,monde);
+            robotPS.moveStandardStep();
+            for(int i = 0; i < monde.numberOfLine; i++){
+                if (monde.Mat[i][PY]){
+                    caseSalle(i,PY);
                 }
             }
         }
-    }
-
-    /*##################################################################################################################
-                                        **********  NETTOYEUR STANDARD *******************
-    ###################################################################################################################*/
-
-    public void nettoyeurStandard(int positionI, int positionJ){
-        robotNStandard = new RobotNettoyeurStandard(positionI,positionJ,monde);
-        //robotNStandard.moveRandomStep();
-        for(int i = 0; i < monde.numberOfLine; i++){
-            for (int j = 0; j < monde.numberOfColumn; j++){
-                if (!monde.Mat[i][j]){
-                    casePropre(i,j);
-                }
-            }
-        }
-    }
-    /*##################################################################################################################
-                                        **********  NETTOYEUR LIBRE *******************
-    ###################################################################################################################*/
-    public void nettoyeurLibre(){
-        robotNL = new RobotNettoyeurLibre(multiple,monde);
-        robotNL.freeClean();
-        for(int i = 0; i < monde.numberOfLine; i++){
-            for (int j = 0; j < monde.numberOfColumn; j++){
-                if (!monde.Mat[i][j]){
-                    casePropre(i,j);
-                }
-            }
-        }
-    }
-
-    /*##########################################################################
-                     **********  BOTTONPOLLUEUR HAUT *******************
-    ###########################################################################*/
-        public void pollueurHaut(int positionI, int positionJ){
-            robotDirection = new RobotPollueurToutDroit(positionI,positionJ,monde);
-            robotDirection.moveNorth();
+        if (e.getSource() == btnPollueurLibre){
+            robotPL = new RobotPollueurLibre(multiple,monde);
+            robotPL.randomMove(nbrBoxApolluer);
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
                     if (monde.Mat[i][j]){
@@ -334,59 +354,129 @@ public class FenetreRobo extends JFrame {
                     }
                 }
             }
+        }
+        if (e.getSource() == btnNettoyeurLibre){
+            robotNL = new RobotNettoyeurLibre(multiple,monde);
+            robotNL.freeClean();
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (!monde.Mat[i][j]){
+                        casePropre(i,j);
+                    }
+                }
+            }
+        }
+        if (e.getSource() == btnNettoyeurSmart){
+            robotNSmart = new RobotNettoyeurSmart(multiple,monde);
+            robotNSmart.cleanSmart();
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (!monde.Mat[i][j]){
+                        casePropre(i,j);
+                    }
+                }
+            }
+        }
+        //definition de nettoyeur standard à revoir
+        if (e.getSource() == btnNettoyeurStandard){
+            //robotNStandard.moveRandomStep();
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (!monde.Mat[i][j]){
+                        casePropre(i,j);
+                    }
+                }
+            }
+        }
+        if (e.getSource() == btnPollueurHaut){
+            moveNorth();
+            System.out.println(PX);
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (monde.Mat[i][j]){
+                        caseSalle(i,j);
+                    }
+                }
+            }
+        }
+        if (e.getSource() == btnpollueurBas){
+            moveSouth();
+            System.out.println(PX);
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (monde.Mat[i][j]){
+                        caseSalle(i,j);
+                    }
+                }
+            }
+        }
+        if (e.getSource() == btnPollueurDroit){
+            moveRight();
+            System.out.println(PY);
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (monde.Mat[i][j]){
+                        caseSalle(i,j);
+                    }
+                }
+            }
+        }
+        if (e.getSource() == btnPollueurGauche){
+            moveLeft();
+            System.out.println(PY);
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (monde.Mat[i][j]){
+                        caseSalle(i,j);
+                    }
+                }
+            }
+        }
+        if (e.getSource() == btnNettoyeurHaut){
+            moveNord();
+            System.out.println(PX);
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (!monde.Mat[i][j]){
+                        casePropre(i,j);
+                    }
+                }
+            }
+        }
+        if (e.getSource() == btnNettoyeurBas){
+            moveSud();
+            System.out.println(PX);
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (!monde.Mat[i][j]){
+                        casePropre(i,j);
+                    }
+                }
+            }
+        }
+        if (e.getSource() == btnNettoyeurDroit){
+            moveDroit();
+            System.out.println(PY);
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (!monde.Mat[i][j]){
+                        casePropre(i,j);
+                    }
+                }
+            }
+        }
+        if (e.getSource() == btnNettoyeurGauche){
+            moveGauche();
+            System.out.println(PY);
+            for(int i = 0; i < monde.numberOfLine; i++){
+                for (int j = 0; j < monde.numberOfColumn; j++){
+                    if (!monde.Mat[i][j]){
+                        casePropre(i,j);
+                    }
+                }
+            }
+        }
 
-        }
-        /*##########################################################################
-                             **********  BOUTTON POLLUEUR BAS ****************
-         ###########################################################################*/
-        public void pollueurBas(int positionI, int positionJ){
-            robotDirection = new RobotPollueurToutDroit(positionI,positionJ,monde);
-            robotDirection.moveSouth();
-            for(int i = 0; i < monde.numberOfLine; i++){
-                for (int j = 0; j < monde.numberOfColumn; j++){
-                    if (monde.Mat[i][j]){
-                        caseSalle(i,j);
-                    }
-                }
-            }
-        }
-        /*##########################################################################
-                             **********  BOUTTON POLLUEUR GAUCHE *******************
-        ###########################################################################*/
-        public void pollueurGauche(int positionI, int positionJ){
-            robotDirection = new RobotPollueurToutDroit(positionI,positionJ,monde);
-            robotDirection.moveLeft();
-            for(int i = 0; i < monde.numberOfLine; i++){
-                for (int j = 0; j < monde.numberOfColumn; j++){
-                    if (monde.Mat[i][j]){
-                        caseSalle(i,j);
-                    }
-                }
-            }
-        }
-        /*##########################################################################
-                             **********  BOUTTON POLLUEUR DROIT ***************
-        ###########################################################################*/
-        public void pollueurDroit(int positionI, int positionJ){
-            robotDirection = new RobotPollueurToutDroit(positionI,positionJ,monde);
-            robotDirection.moveRight();
-            for(int i = 0; i < monde.numberOfLine; i++){
-                for (int j = 0; j < monde.numberOfColumn; j++){
-                    if (monde.Mat[i][j]){
-                        caseSalle(i,j);
-                    }
-                }
-            }
-        }
-
-        /*##########################################################################
-                             **********  BOUTTON POLLUEUR DROIT ***************
-        ###########################################################################
-        btnPollueurDroit.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            pollueurDroit(PX,PY);
-        }
-    });*/
+    }
 
 }
