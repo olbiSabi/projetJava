@@ -372,6 +372,7 @@ public class FenetreRobo extends JFrame implements ActionListener {
             robotPTD = new RobotPollueurToutDroit(PX,PY,monde);
             robotPTD.moveStandard();
             for(int i = 0; i < monde.numberOfLine; i++){
+                robotPTD.moveStandard();
                 if (monde.Mat[i][PY]){
                     caseSalle(i,PY);
                 }
@@ -380,8 +381,8 @@ public class FenetreRobo extends JFrame implements ActionListener {
         }
         if (e.getSource() == btnPollueurSauteur){
             robotPS = new RobotPollueurSauteurs(PX,PY,monde);
-            robotPS.moveStandardStep();
             for(int i = 0; i < monde.numberOfLine; i++){
+                robotPS.moveStandardStep();
                 if (monde.Mat[i][PY]){
                     caseSalle(i,PY);
                 }
@@ -389,9 +390,9 @@ public class FenetreRobo extends JFrame implements ActionListener {
         }
         if (e.getSource() == btnPollueurLibre){
             robotPL = new RobotPollueurLibre(multiple,monde);
-            robotPL.randomMove(nbrBoxApolluer);
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
+                    robotPL.randomMove(nbrBoxApolluer);
                     if (monde.Mat[i][j]){
                         caseSalle(i,j);
                     }
@@ -400,9 +401,9 @@ public class FenetreRobo extends JFrame implements ActionListener {
         }
         if (e.getSource() == btnNettoyeurLibre){
             robotNL = new RobotNettoyeurLibre(multiple,monde);
-            robotNL.freeClean();
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
+                    robotNL.freeClean();
                     if (!monde.Mat[i][j]){
                         casePropre(i,j);
                     }
@@ -411,9 +412,9 @@ public class FenetreRobo extends JFrame implements ActionListener {
         }
         if (e.getSource() == btnNettoyeurSmart){
             robotNSmart = new RobotNettoyeurSmart(multiple,monde);
-            robotNSmart.cleanSmart();
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
+                    robotNSmart.cleanSmart();
                     if (!monde.Mat[i][j]){
                         casePropre(i,j);
                     }
