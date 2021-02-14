@@ -34,7 +34,7 @@ public class RobotNettoyeur extends Robot {
             for (int i = 0; i< m.numberOfLine; i++){
                 for(int j =0; j< m.numberOfColumn; j++){
                     if(m.Mat[posx][posy]){
-                        m.Mat[posx][posy] = false;
+                        m.Mat[posx][posy] = false ;
                     }
                 }
             }

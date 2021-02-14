@@ -9,6 +9,7 @@ import com.sabi.robot.pollueur.RobotPollueurSauteurs;
 import com.sabi.robot.pollueur.RobotPollueurToutDroit;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,6 +53,7 @@ public class FenetreRobo extends JFrame implements ActionListener {
     private JPanel tableau;
     private JLabel messageError;
     private JLabel nombePapierGras;
+    private JButton robot;
     public JLabel box[][];
     public int NBC;
     public int NBL;
@@ -72,7 +74,7 @@ public class FenetreRobo extends JFrame implements ActionListener {
     public FenetreRobo(){
         add(Principal);
         setTitle("Robot Monde De ONIANKITAN Sabi");
-        setSize(900,600);
+        setSize(1000,670);
         createUIComponents();
         apparenceDesComposant();
 
@@ -123,8 +125,8 @@ public class FenetreRobo extends JFrame implements ActionListener {
 
     }
     public void apparenceDesComposant(){
-        containerWest.setPreferredSize(new Dimension(180,100));
-        containerEast.setPreferredSize(new Dimension(180,100));
+        containerWest.setPreferredSize(new Dimension(160,100));
+        containerEast.setPreferredSize(new Dimension(160,100));
         containerNorth.setPreferredSize(new Dimension(100,100));
         containerWest.setBorder(BorderFactory.createMatteBorder(1,5,5,1,Color.BLACK));
         containerEast.setBorder(BorderFactory.createMatteBorder(1,1,5,5,Color.BLACK));
@@ -147,6 +149,8 @@ public class FenetreRobo extends JFrame implements ActionListener {
         caseNettoyer.setBackground(Color.CYAN);
         papierGras.setPreferredSize(new Dimension(40, 40));
         papierGras.setBackground(Color.BLACK);
+        robot.setPreferredSize(new Dimension(40, 40));
+        robot.setBackground(Color.red);
 
     }
 
@@ -160,6 +164,7 @@ public class FenetreRobo extends JFrame implements ActionListener {
                 box[i][j].setOpaque(true);
                 box[i][j].setBorder(BorderFactory.createMatteBorder(2,2,2,2,Color.WHITE));
             }
+
         }catch(RobotException e){
             messageError.setText("Erreur. (i ou j) > (NBL ou NBC)");
             messageError.setForeground(Color.red);
@@ -192,6 +197,8 @@ public class FenetreRobo extends JFrame implements ActionListener {
                     box[i][j] = new JLabel("");
                     casePropre(i,j);
                 }
+                //box[PX][PY] = new JLabel("");
+                //couleurRobot();
             }
         }
         tableau.setLayout(new GridLayout(ligne,colonne));
@@ -218,7 +225,8 @@ public class FenetreRobo extends JFrame implements ActionListener {
 //########################################## POLLUEUR ############################################
     //move South
     public void moveSouth(){
-        if (PX < NBL){
+        monde.Mat[PX][PY] = true;
+        if (PX < NBL-1){
             PX = PX+1;
             monde.Mat[PX][PY] = true;
         }
@@ -229,7 +237,8 @@ public class FenetreRobo extends JFrame implements ActionListener {
     }
     //move North
     public void moveNorth(){
-        if (PX >= 0){
+        monde.Mat[PX][PY] = true;
+        if (PX > 0){
             PX = PX-1;
             monde.Mat[PX][PY] = true;
         }
@@ -240,7 +249,8 @@ public class FenetreRobo extends JFrame implements ActionListener {
     }
     //move right
     public void moveRight(){
-        if (PY < NBC){
+        monde.Mat[PX][PY] = true;
+        if (PY < NBC-1){
             PY = PY+1;
             monde.Mat[PX][PY] = true;
 
@@ -252,7 +262,8 @@ public class FenetreRobo extends JFrame implements ActionListener {
     }
     //move left
     public void moveLeft(){
-        if (PY >= 0){
+        monde.Mat[PX][PY] = true;
+        if (PY > 0){
             PY = PY-1;
             monde.Mat[PX][PY] = true;
 
@@ -265,7 +276,8 @@ public class FenetreRobo extends JFrame implements ActionListener {
     //########################################## NETTOYEUR ############################################
     //move South
     public void moveSud(){
-        if (PX < NBL){
+        monde.Mat[PX][PY] = false;
+        if (PX < NBL-1){
             PX = PX+1;
             monde.Mat[PX][PY] = false;
         }
@@ -276,7 +288,8 @@ public class FenetreRobo extends JFrame implements ActionListener {
     }
     //move North
     public void moveNord(){
-        if (PX >= 0){
+        monde.Mat[PX][PY] = false;
+        if (PX > 0){
             PX = PX-1;
             monde.Mat[PX][PY] = false;
         }
@@ -287,7 +300,8 @@ public class FenetreRobo extends JFrame implements ActionListener {
     }
     //move right
     public void moveDroit(){
-        if (PY < NBC){
+        monde.Mat[PX][PY] = false;
+        if (PY < NBC-1){
             PY = PY+1;
             monde.Mat[PX][PY] = false;
         }
@@ -298,13 +312,40 @@ public class FenetreRobo extends JFrame implements ActionListener {
     }
     //move left
     public void moveGauche(){
-        if (PY >= 0){
+        monde.Mat[PX][PY] = false;
+        if (PY > 0){
             PY = PY-1;
             monde.Mat[PX][PY] = false;
         }
         else{
             messageError.setText(" vous êtes à la limite du monde");
             messageError.setForeground(Color.red);
+        }
+    }
+    //#############################  deplacement robot ############################
+    public void couleurRobot(){
+        box[PX][PY].setBackground(Color.red);
+        box[PX][PY].setOpaque(true);
+        box[PX][PY].setBorder(BorderFactory.createMatteBorder(4,4,4,4,Color.WHITE));
+    }
+    public void robotBas(){
+        if (PX < NBL){
+            couleurRobot();
+        }
+    }
+    public void robotHaut(){
+        if (PX >=0){
+            couleurRobot();
+        }
+    }
+    public void robotDroit(){
+        if (PY < NBC){
+            couleurRobot();
+        }
+    }
+    public void robotGauche(){
+        if (PY >= 0){
+            couleurRobot();
         }
     }
     @Override
@@ -322,6 +363,7 @@ public class FenetreRobo extends JFrame implements ActionListener {
             multiple = NBL ;
             nbrBoxApolluer = (NBL*NBC)/3;
             initMonde(NBL,NBC);
+            couleurRobot();
             nombreDeLigne.setText("");
             nombreDeCollonne.setText("");
             btnValider.setEnabled(false);
@@ -334,6 +376,7 @@ public class FenetreRobo extends JFrame implements ActionListener {
                     caseSalle(i,PY);
                 }
             }
+            //couleurRobot();
         }
         if (e.getSource() == btnPollueurSauteur){
             robotPS = new RobotPollueurSauteurs(PX,PY,monde);
@@ -390,89 +433,97 @@ public class FenetreRobo extends JFrame implements ActionListener {
         }
         if (e.getSource() == btnPollueurHaut){
             moveNorth();
-            System.out.println(PX);
+            //System.out.println(PX);
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
                     if (monde.Mat[i][j]){
                         caseSalle(i,j);
                     }
+                    robotHaut();
                 }
             }
         }
         if (e.getSource() == btnpollueurBas){
             moveSouth();
-            System.out.println(PX);
+            //System.out.println(PX);
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
                     if (monde.Mat[i][j]){
                         caseSalle(i,j);
                     }
+                    robotBas();
                 }
             }
         }
         if (e.getSource() == btnPollueurDroit){
             moveRight();
-            System.out.println(PY);
+            //System.out.println(PY);
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
                     if (monde.Mat[i][j]){
                         caseSalle(i,j);
                     }
+                    robotDroit();
                 }
             }
         }
         if (e.getSource() == btnPollueurGauche){
             moveLeft();
-            System.out.println(PY);
+            //System.out.println(PY);
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
                     if (monde.Mat[i][j]){
                         caseSalle(i,j);
                     }
+                    robotGauche();
                 }
             }
         }
         if (e.getSource() == btnNettoyeurHaut){
             moveNord();
-            System.out.println(PX);
+            //System.out.println(PX);
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
                     if (!monde.Mat[i][j]){
                         casePropre(i,j);
                     }
+                    robotHaut();
                 }
             }
         }
         if (e.getSource() == btnNettoyeurBas){
             moveSud();
-            System.out.println(PX);
+            //System.out.println(PX);
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
                     if (!monde.Mat[i][j]){
                         casePropre(i,j);
                     }
+                    robotBas();
                 }
             }
         }
         if (e.getSource() == btnNettoyeurDroit){
             moveDroit();
-            System.out.println(PY);
+            //System.out.println(PY);
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
                     if (!monde.Mat[i][j]){
                         casePropre(i,j);
                     }
+                    robotDroit();
                 }
             }
         }
         if (e.getSource() == btnNettoyeurGauche){
             moveGauche();
-            System.out.println(PY);
+            //System.out.println(PY);
             for(int i = 0; i < monde.numberOfLine; i++){
                 for (int j = 0; j < monde.numberOfColumn; j++){
                     if (!monde.Mat[i][j]){
                         casePropre(i,j);
                     }
+                    robotGauche();
                 }
             }
         }
