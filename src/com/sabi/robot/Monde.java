@@ -59,6 +59,13 @@ public class Monde {
     public void affiche(){
         for (int i = 0; i < numberOfLine; i++){
             for (int j = 0; j < numberOfColumn; j++){
+                try{
+                    Thread.sleep(200); // sleep for 10 seconds
+                }catch (InterruptedException a)
+                {
+                    // ooops
+                }
+
                 System.out.print(" | "+Mat[i][j]);
             }
             System.out.println("|\n");
