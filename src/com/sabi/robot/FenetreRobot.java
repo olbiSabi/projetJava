@@ -8,15 +8,13 @@ import com.sabi.robot.pollueur.RobotPollueurLibre;
 import com.sabi.robot.pollueur.RobotPollueurSauteurs;
 import com.sabi.robot.pollueur.RobotPollueurToutDroit;
 
+
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
-public class FenetreRobo extends JFrame implements ActionListener {
+public class FenetreRobot extends JFrame implements ActionListener {
     private JPanel Principal;
     private JPanel container;
     private JPanel containerCenter;
@@ -71,7 +69,7 @@ public class FenetreRobo extends JFrame implements ActionListener {
     public RobotNettoyeurSmart robotNSmart;
     public RobotNettoyeurStandard robotNStandard;
 
-    public FenetreRobo(){
+    public FenetreRobot(){
         add(Principal);
         setTitle("Robot Monde De ONIANKITAN Sabi");
         setSize(1000,670);
@@ -112,7 +110,7 @@ public class FenetreRobo extends JFrame implements ActionListener {
         btnNettoyeurGauche.addActionListener(this);
         /***********  BOUTTON NETTOYEUR DROIT ******************/
         btnNettoyeurDroit.addActionListener(this);
-        setDefaultCloseOperation(FenetreRobo.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(FenetreRobot.EXIT_ON_CLOSE);
         setVisible(true);
 
     }
@@ -154,6 +152,23 @@ public class FenetreRobo extends JFrame implements ActionListener {
 
     }
 
+    public void verification(int i, int j){
+        try{
+            messageError.setText("");
+            monde.cleanBox(i,j);
+            if (!monde.Mat[i][j]){
+                box[i][j].setBackground(Color.RED);
+                box[i][j].setOpaque(true);
+                box[i][j].setBorder(BorderFactory.createMatteBorder(2,2,2,2,Color.WHITE));
+            }
+
+        }catch(RobotException e){
+            messageError.setText("Erreur. (PX ou PY) > (NBL ou NBC)");
+            messageError.setForeground(Color.red);
+            btnValider.setEnabled(false);
+        }
+        nombePapierGras.setText(String.valueOf(monde.countBoxPollute()));
+    }
     //case propre
     public void casePropre(int i, int j){
         try{
@@ -190,6 +205,7 @@ public class FenetreRobo extends JFrame implements ActionListener {
     }
     // Initialiser notre monde
     public void initMonde(int ligne, int colonne){
+
         monde = new Monde(ligne,colonne);
         for (int i = 0; i < ligne; i++){
             for(int j = 0; j < colonne; j++){
@@ -207,6 +223,7 @@ public class FenetreRobo extends JFrame implements ActionListener {
                 tableau.add(box[i][j]);
             }
         }
+        verification(PX,PY);
     }
     /***********  POLLUEUR SAUTEUR ***********/
     public void sauteurAlleatoir(){
@@ -348,11 +365,12 @@ public class FenetreRobo extends JFrame implements ActionListener {
             couleurRobot();
         }
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnRenitialiser) {
             this.dispose();
-            new FenetreRobo();
+            new FenetreRobot();
         }
         if (e.getSource() == btnValider) {
             NBL = Integer.parseInt(nombreDeLigne.getText());
@@ -539,4 +557,7 @@ public class FenetreRobo extends JFrame implements ActionListener {
         }
     }
 
+    public static void main(String[] args) {
+        FenetreRobot Mafenetre = new FenetreRobot();
+    }
 }
